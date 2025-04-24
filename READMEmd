@@ -66,7 +66,7 @@ Tested on 4,800 labeled emails.
 pip install -r requirements.txt
 
 2. Train your model
-python train_model.py --csv_path "<your path>\akaike\data\combined_emails_with_natural_pii.csv" --text_col email --label_col type
+python train_model.py --csv_path "<your path>\akaike_jennifer\data\combined_emails_with_natural_pii.csv" --text_col email --label_col type
 
 3. Run the FastAPI Endpoint
 Start the FastAPI app
