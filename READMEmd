@@ -1,16 +1,129 @@
-# Email Classification and PII Masking System
+# Email Classifier for IT Service Desk – RandomForest + TF-IDF
 
-This project implements an email classification system with PII masking for a company's support team.
+This model classifies emails into one of four IT service desk categories: **Incident**, **Problem**, **Change**, or **Request**. It is built with a TF-IDF vectorizer and a `RandomForestClassifier`, trained on real-world service desk data.
 
-## Features
+---
 
-- Detection and masking of PII (Personal Identifiable Information)
-- Email classification into support categories
-- REST API for integration with other systems
+## Project Overview
 
-## Setup
+IT support teams often receive large volumes of emails that need to be categorized before further action. Manual triage can be slow and inconsistent. This project automates that triage using natural language processing (NLP) and supervised machine learning.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/jenniferteresageorge/email-classification.git
-   cd email-classification
+**Goal:** Automatically classify emails into one of the following categories:
+- **Incident** – Something is broken and needs fixing.
+- **Problem** – Recurrent issues or root cause investigations.
+- **Change** – A planned change request (e.g., install software).
+- **Request** – General help or access requests.
+
+---
+
+## Model Architecture
+
+The classifier pipeline consists of:
+
+- **Text Preprocessing** (`utils.py`)
+  - Lowercasing
+  - Lemmatization
+  - Removal of stopwords (excluding negation)
+  - Optional PII masking for sensitive inputs
+
+- **Vectorizer**
+  - TF-IDF (max features = 15,000)
+  - n-gram range = (1, 3)
+
+- **Oversampling**
+  - `RandomOverSampler` from `imblearn` to balance underrepresented classes
+
+- **Classifier**
+  - `RandomForestClassifier` (sklearn)
+  - 100 trees, default depth and features
+
+The full pipeline is saved as a `.joblib` file for easy deployment and reuse.
+
+---
+
+## Model Performance
+
+Tested on 4,800 labeled emails.
+
+| Category  | Precision | Recall | F1-Score | Support |
+|-----------|-----------|--------|----------|---------|
+| Change    | 0.90      | 0.76   | 0.82     | 504     |
+| Incident  | 0.69      | 0.90   | 0.78     | 1917    |
+| Problem   | 0.64      | 0.28   | 0.40     | 1007    |
+| Request   | 0.89      | 0.92   | 0.90     | 1372    |
+
+**Overall Accuracy:** 76%  
+**Macro F1-Score:** 0.73  
+**Weighted F1-Score:** 0.74
+
+---
+
+## How to Use the Model
+
+1. **Install dependencies**
+
+```bash
+pip install -r requirements.txt
+
+2. Load the model and make a prediction
+
+import joblib
+
+# Load the model
+model = joblib.load("email_classifier.joblib")
+
+# Sample input
+sample_email = ["The VPN access is not working for some users. Please assist."]
+
+# Predict category
+prediction = model.predict(sample_email)
+print(f"Predicted category: {prediction[0]}")
+
+ Option 2: Run the FastAPI Endpoint
+Start the FastAPI app
+
+bash
+uvicorn app:app --reload
+Make a request using curl, Postman, or Python
+
+Endpoint: POST /predict
+URL: http://127.0.0.1:5000/predict
+
+Request Body: (json)
+{"email_body": "Hello, John Doe has billing issues, and his email is johndoe@example.com. "}
+
+Response: (json)
+{
+    "input_email_body": "Hello, John Doe has billing issues, and his email is johndoe@example.com. ",
+    "list_of_masked_entities": [
+        {
+            "position": [
+                7,
+                15
+            ],
+            "classification": "full_name",
+            "entity": "John Doe"
+        },
+        {
+            "position": [
+                53,
+                72
+            ],
+            "classification": "email",
+            "entity": "johndoe@example.com"
+        }
+    ],
+    "masked_email": "Hello, [full_name] has billing issues, and his email is [email]. ",
+    "category_of_the_email": "Problem"
+}
+
+Folder Structure Recap:
+.
+├── app.py               # FastAPI app
+├── models.py            # Model training, vectorization logic
+├── train_model.py       # Model training script
+├── test.py              # Simple model test script
+├── utils.py             # Preprocessing and PII masking
+├── email_classifier.joblib  # Trained model pipeline (TF-IDF + RandomForest)
+
+
