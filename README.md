@@ -1,1 +1,0 @@
-# akaike_jennifer
