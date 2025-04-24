@@ -16,13 +16,12 @@ app = FastAPI(
 pii_detector = PIIDetector()
 email_classifier = EmailClassifier()
 
-# Load the model (in production, this would be a pre-trained model)
 try:
     email_classifier.load_model("email_classifier.joblib")
-except:
-    # If no saved model exists, train a sample one
-    print("Training sample model...")
-    email_classifier.train_sample_model()
+except Exception as e:
+    print("Model loading failed:", e)
+    raise RuntimeError("Pre-trained model not found. Please train it using train_model.py")
+
 
 class EmailRequest(BaseModel):
     email_body: str
@@ -79,4 +78,4 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=5000)
