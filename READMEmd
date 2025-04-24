@@ -65,21 +65,10 @@ Tested on 4,800 labeled emails.
 ```bash
 pip install -r requirements.txt
 
-2. Load the model and make a prediction
+2. Train your model
+python train_model.py --csv_path "<your path>\akaike\data\combined_emails_with_natural_pii.csv" --text_col email --label_col type
 
-import joblib
-
-# Load the model
-model = joblib.load("email_classifier.joblib")
-
-# Sample input
-sample_email = ["The VPN access is not working for some users. Please assist."]
-
-# Predict category
-prediction = model.predict(sample_email)
-print(f"Predicted category: {prediction[0]}")
-
- Option 2: Run the FastAPI Endpoint
+3. Run the FastAPI Endpoint
 Start the FastAPI app
 
 bash
@@ -124,6 +113,6 @@ Folder Structure Recap:
 ├── train_model.py       # Model training script
 ├── test.py              # Simple model test script
 ├── utils.py             # Preprocessing and PII masking
-├── email_classifier.joblib  # Trained model pipeline (TF-IDF + RandomForest)
+
 
 
