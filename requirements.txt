@@ -9,3 +9,5 @@ python-dateutil>=2.8.0
 psutil>=5.8.0
 nltk>=3.6.0
 nlpaug>=1.1.0
+imblearn
+huggingface_hub
