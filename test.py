@@ -1,11 +1,4 @@
 from models import EmailClassifier
 
-# Load the trained model
-classifier = EmailClassifier()
-classifier.load_model("email_classifier.joblib")
-
-# Test prediction
-sample_email = "John Doe needs help resetting my password"
-prediction = classifier.predict(sample_email)
-
-print(f"Predicted category: {prediction}")
+clf = EmailClassifier()
+clf.train_from_csv("data/combined_emails_with_natural_pii.csv", use_grid_search=True)
