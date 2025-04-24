@@ -1,0 +1,16 @@
+# Email Classification and PII Masking System
+
+This project implements an email classification system with PII masking for a company's support team.
+
+## Features
+
+- Detection and masking of PII (Personal Identifiable Information)
+- Email classification into support categories
+- REST API for integration with other systems
+
+## Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/jenniferteresageorge/email-classification.git
+   cd email-classification
